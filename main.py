@@ -4,10 +4,21 @@ import time
 
 def start_screen(stdscr):
     stdscr.clear()
-    stdscr.addstr(0, 0, "Welcome to the Speed Typing Test!")
-    stdscr.addstr(2, 0, "Press any key to begin!")
+    max_y, max_x = stdscr.getmaxyx()
+
+    welcome_text = "Welcome to the Speed Typing Test!"
+    welcome_x = max_x // 2 - len(welcome_text) // 2  # Center horizontally for the welcome text
+
+    middle_text = "Press any key to begin!"
+    middle_x = max_x // 2 - len(middle_text) // 2  # Center horizontally for the middle text
+
+    stdscr.addstr(max_y // 2, welcome_x, welcome_text)  # Places the welcome text in the middle vertically
+    stdscr.addstr(max_y // 2 + 2, middle_x, middle_text)  # Places the middle text below the welcome text
+
     stdscr.refresh()
-    stdscr.getkey()
+    stdscr.getch()
+
+
 
 def load_text():
     with open("text.txt", "r") as f:
@@ -15,16 +26,24 @@ def load_text():
         return random.choice(lines).strip()
 
 def display_text(stdscr, target, current, wpm=0):
-    stdscr.addstr(4, 0, target)
-    stdscr.addstr(5, 0, f"WPM: {wpm}")
+    max_y, max_x = stdscr.getmaxyx()
+    text_length = len(target)
+
+    start_y = max_y // 2
+    start_x = max_x // 2 - text_length // 2
+
+    stdscr.addstr(start_y, start_x, target)
+    stdscr.addstr(start_y + 1, 0, f"WPM: {wpm}")
 
     for i, char in enumerate(current):
-        correct_char = target[i]
-        color = curses.color_pair(1)
-        if char != correct_char:
-            color = curses.color_pair(2)
+        if i < text_length:
+            correct_char = target[i]
+            color = curses.color_pair(1)
+            if char != correct_char:
+                color = curses.color_pair(2)
 
-        stdscr.addstr(4, i, char, color)
+            stdscr.addstr(start_y, start_x + i, char, color)
+
 
 def wpm_test(stdscr):
     target_text = load_text()
@@ -35,15 +54,22 @@ def wpm_test(stdscr):
 
     while True:
         time_elapsed = max(time.time() - start_time, 1)
-        wpm = round((len(current_text) / time_elapsed) / 5)
+        wpm = round(((len(current_text) / 5) / (time_elapsed / 60))  / 5)
         stdscr.clear()
         display_text(stdscr, target_text, current_text, wpm)
         stdscr.refresh()
 
-        key = stdscr.getkey()
-        if ord(key) == 27:
+        if "".join(current_text) == target_text:
+            stdscr.nodelay(False)
             break
-        if key in (curses.KEY_BACKSPACE, '\b', '\x7f'):
+        try:
+            key = stdscr.getkey()
+        except: continue
+
+        if ord(key) == 27:  # ESC key
+            break
+
+        if key in ("KEY_BACKSPACE", '\b', "\x7f"):
             if len(current_text) > 0:
                 current_text.pop()
         elif len(current_text) < len(target_text):
@@ -58,8 +84,8 @@ def main(stdscr):
     while True:
         wpm_test(stdscr)
         stdscr.addstr(6, 0, "You completed the text! Press any key to continue...")
-        key = stdscr.getkey()
-        if ord(key) == 27:
+        key = stdscr.getch()
+        if key == 27:  # ESC key
             break
 
 curses.wrapper(main)

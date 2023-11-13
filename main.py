@@ -1,29 +1,28 @@
-import curses
-import random
+import curses 
+import random 
 import time
 
 def start_screen(stdscr):
-    stdscr.clear()
+    stdscr.clear() 
     max_y, max_x = stdscr.getmaxyx()
 
     welcome_text = "Welcome to the Speed Typing Test!"
-    welcome_x = max_x // 2 - len(welcome_text) // 2  # Center horizontally for the welcome text
+    welcome_x = max_x // 2 - len(welcome_text) // 2  
 
     middle_text = "Press any key to begin!"
-    middle_x = max_x // 2 - len(middle_text) // 2  # Center horizontally for the middle text
+    middle_x = max_x // 2 - len(middle_text) // 2  
 
-    stdscr.addstr(max_y // 2, welcome_x, welcome_text)  # Places the welcome text in the middle vertically
-    stdscr.addstr(max_y // 2 + 2, middle_x, middle_text)  # Places the middle text below the welcome text
-
-    stdscr.refresh()
+    stdscr.addstr(max_y // 2, welcome_x, welcome_text)  
+    stdscr.addstr(max_y // 2 + 2, middle_x, middle_text) 
+    stdscr.refresh() 
     stdscr.getch()
 
 
 
-def load_text():
+def load_text(): 
     with open("text.txt", "r") as f:
-        lines = f.readlines()
-        return random.choice(lines).strip()
+        lines = f.readlines() 
+        return random.choice(lines).strip() 
 
 def display_text(stdscr, target, current, wpm=0):
     max_y, max_x = stdscr.getmaxyx()
@@ -46,7 +45,7 @@ def display_text(stdscr, target, current, wpm=0):
 
 
 def wpm_test(stdscr):
-    target_text = load_text()
+    target_text = load_text() 
     current_text = []
     wpm = 0
     start_time = time.time()
@@ -66,7 +65,7 @@ def wpm_test(stdscr):
             key = stdscr.getkey()
         except: continue
 
-        if ord(key) == 27:  # ESC key
+        if ord(key) == 27: 
             break
 
         if key in ("KEY_BACKSPACE", '\b', "\x7f"):
@@ -75,7 +74,7 @@ def wpm_test(stdscr):
         elif len(current_text) < len(target_text):
             current_text.append(key)
 
-def main(stdscr):
+def main(stdscr): #orchestrates the whole process
     curses.start_color()
     curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -88,4 +87,4 @@ def main(stdscr):
         if key == 27:  # ESC key
             break
 
-curses.wrapper(main)
+curses.wrapper(main) #executes the main function using curses for terminal-based interaction

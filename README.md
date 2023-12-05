@@ -18,3 +18,5 @@ Ketik teks yang ditampilkan secara akurat.
 Setelah selesai, peroleh hasil WPM dari kecepatan mengetik Anda.
 
           
+=======
+# PROJEK-AKHIR-SEMESTER-1

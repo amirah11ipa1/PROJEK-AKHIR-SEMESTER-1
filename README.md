@@ -16,3 +16,5 @@ Jalankan program di command line.
 Ikuti instruksi untuk mulai uji ketik.
 Ketik teks yang ditampilkan secara akurat.
 Setelah selesai, peroleh hasil WPM dari kecepatan mengetik Anda.
+
+          
